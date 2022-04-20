@@ -19,7 +19,7 @@
 #    along with nikw.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
 """
-    nikw project : wisteria/aboutproject.py
+    nikw project : nikw/aboutproject.py
 
     Global constants defining the project : version number, author, license, etc.
     ___________________________________________________________________________
