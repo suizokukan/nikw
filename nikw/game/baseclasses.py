@@ -29,6 +29,9 @@ from game.constants import DATANATURE_INMEMORY, PLAYERTYPE__NOPLAYER
 
 
 class RootClass(MotherClassSerErr):
+    """
+    Root class of all classes in this file.
+    """
     def copy(self):
         self.export_as(expected_data_type=DATANATURE_INMEMORY)
 
@@ -43,6 +46,9 @@ class RootClass(MotherClassSerErr):
 
 
 class Game(RootClass):
+    """
+    Game as "chess" or "tic-tac-toe", not as "party" or "match".
+    """
     def __init__(self,
                  rules_name,
                  players_description=None,
@@ -89,11 +95,33 @@ class Move(RootClass):
     pass
 
 
+class PlayersDescription(RootClass, dict):
+    """
+    [player_id] = Player
+    """
+    pass
+
+
+class PlayerDescription(RootClass):
+    def __init__(self,
+                 player_id=None,
+                 player_name=None,
+                 player_type=PLAYERTYPE__NOPLAYER):
+        self.player_id = player_id
+        self.player_name = player_name
+        self.player_type = player_type
+
+
 class Board(RootClass):
     pass
 
 
 class Board2DCellsRectangleIntValue(Board):
+    """
+    Board + 2D rectangular board + Cell(int_value)
+
+    BEWARE: very slow way to achieve this !
+    """
     def __init__(self,
                  cell_values,
                  xymin,
@@ -134,12 +162,13 @@ class Board2DCellsRectangleIntValue(Board):
         return self.cells[xy]
 
     def set_cell(self,
-                 xy, value):
-        self.cells[xy] = self.boardcell_object(value)
+                 xy,
+                 int_value):
+        self.cells[xy] = self.boardcell_object(int_value)
 
     def set_default_cells(self):
         for xy in self.get_all_xy():
-            self.set_cell(xy, value=0)
+            self.set_cell(xy, int_value=0)
 
             if not self.get_cell(xy).errors.zero_error_or_warning():
                 self.errors.extend(self.cells[xy].errors)
@@ -147,32 +176,32 @@ class Board2DCellsRectangleIntValue(Board):
 
 class BoardCell(RootClass):
     def __init__(self,
-                 value=None):
+                 int_value=None):
         RootClass.__init__(self)
-        self.value = value
+        self.int_value = int_value
 
     def hashvalue(self):
         raise NotImplementedError
 
 
-class BoardCellNoneOrNvalues(BoardCell):
-    # values[0] is the null value, i.e. __init__(value=BoardCellNoneOrNvalues.values[0])
-    values = (0, 1, 2)
+class BoardCellIntValues(BoardCell):
+    # int_values[0] is the null value, i.e. __init__(int_value=BoardCellNoneOrNint_values.int_values[0])
+    int_values = (0, 1, 2)
 
     def __init__(self,
-                 value=0):
-        if value not in BoardCellNoneOrNvalues.values:
+                 int_value=0):
+        if int_value not in BoardCellIntValues.int_values:
             BoardCell.__init__(self, None)
             self.errors.append(
                 Error(f"Error: can't initialize {self.__class__.__name__} object."
-                      f"Incorrect value '{value}' given to initialize the object."
-                      f"Acceptable values are {BoardCellNoneOrNvalues.values}."))
+                      f"Incorrect value '{int_value}' given to initialize the object."
+                      f"Acceptable values are {BoardCellIntValues.int_values}."))
         else:
-            BoardCell.__init__(self, value)
+            BoardCell.__init__(self, int_value)
 
     def get_hashvalue(self):
         """
-            BoardCellNoneOrNvalues.get_hashvalue()
+            BoardCellIntValues.get_hashvalue()
 
             Return a hash value of <self>.
             ___________________________________________________________________
@@ -182,22 +211,7 @@ class BoardCellNoneOrNvalues(BoardCell):
             RETURNED VALUE: (bytes)hash value
         """
         res = hashfunction()
-        res.update(str(self.value).encode())
+        res.update(str(self.int_value).encode())
         return res.digest()
 
 
-class PlayersDescription(RootClass, dict):
-    """
-    [player_id] = Player
-    """
-    pass
-
-
-class PlayerDescription(RootClass):
-    def __init__(self,
-                 player_id=None,
-                 player_name=None,
-                 player_type=PLAYERTYPE__NOPLAYER):
-        self.player_id = player_id
-        self.player_name = player_name
-        self.player_type = player_type

@@ -1,5 +1,10 @@
 [CURRENT] v. 0.0.1
 
+[DONE] task-6
+
+    * 'value' > 'int_value'
+    * improved doc
+
 [DONE] task-5
 
     * new files
