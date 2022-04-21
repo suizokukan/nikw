@@ -1,5 +1,10 @@
 [CURRENT] v. 0.0.1
 
+[DONE] task-7
+
+    * nikw/game/baseclasses_2Drectint.py
+    * improved doc.
+
 [DONE] task-6
 
     * 'value' > 'int_value'

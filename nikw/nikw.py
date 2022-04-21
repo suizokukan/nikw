@@ -38,8 +38,8 @@ def main():
 
 if __name__ == '__main__':
     from hashfuncs import binhash_to_strb85
-    from game.baseclasses import Board2DCellsRectangleIntValue, BoardCellNoneOrNvalues
-    board = Board2DCellsRectangleIntValue((0, 1, 2), (0, 0), (18, 18), BoardCellNoneOrNvalues)
+    from game.baseclasses_2Drectint import Board2DCellsRectangleIntValue, BoardCellIntValues
+    board = Board2DCellsRectangleIntValue((0, 1, 2), (0, 0), (18, 18), BoardCellIntValues)
     print(binhash_to_strb85(board.get_hashvalue()))
     print(board.errors)
     sys.exit(main())
