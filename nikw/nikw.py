@@ -23,19 +23,19 @@
 """
 import sys
 
+
 from hashfuncs import hashfunction, binhash_to_strb85
 from exc_motherclass.motherclass import MotherClassSerErr
+from exc_errors.errors import ErrorSer as Error
 
 
 # KNOWN_GAMESRULES[(str) game rulen name] = ("game rule module",
 #                                            None < will be the imported module
 #                                           )
-KNOWN_GAMESRULES = {"gomokunarabe/3x3;2p": ("gamerules.gomokunarabe_3x3_2p",
+KNOWN_GAMESRULES = {"gomokunarabe/3x3;2p": ("game.gamerules.gomokunarabe_3x3_2p",
                                             None,
                                             ),
                     }
-
-
 
 DATANATURE_INMEMORY = 0x01
 DATANATURE_DB = 0x02
@@ -115,24 +115,28 @@ class Board(RootClass):
     pass
 
 
-class Board2DCellsRectangle(Board):
+class Board2DCellsRectangleIntValue(Board):
     def __init__(self,
+                 cell_values,
                  xmin,
                  xmax,
                  ymin,
                  ymax,
                  boardcell_object):
+        Board.__init__(self)
+        self.cell_values = cell_values
         self.xmin = xmin
         self.xmax = xmax
         self.ymin = ymin
         self.ymax = ymax
         self.cells = {}
-        for (x, y) in self.get_xy():
-            self.cells[(x, y)] = boardcell_object(value=None)
+        self.boardcell_object = boardcell_object
+
+        self.set_default_cells()
 
     def get_hashvalue(self):
         """
-            Board2DCellsRectangle.get_hashvalue()
+            Board2DCellsRectangleIntValue.get_hashvalue()
 
             Return a hash value of <self>.
             ___________________________________________________________________
@@ -142,14 +146,30 @@ class Board2DCellsRectangle(Board):
             RETURNED VALUE: (bytes)hash value
         """
         res = hashfunction()
-        for x, y in self.get_xy():
+        for x, y in self.get_all_xy():
             res.update(self.cells[x, y].get_hashvalue())
         return res.digest()
-            
-    def get_xy(self):
+
+    def get_all_xy(self):
         for x in range(self.xmin, self.xmax+1):
             for y in range(self.ymin, self.ymax+1):
                 yield (x, y)
+
+    def get_cell(self,
+                 x,
+                 y):
+        return self.cells[(x, y)]
+
+    def set_cell(self,
+                 x, y, value):
+        self.cells[(x, y)] = self.boardcell_object(value)
+
+    def set_default_cells(self):
+        for (x, y) in self.get_all_xy():
+            self.set_cell(x, y, value=0)
+
+            if not self.get_cell(x, y).errors.zero_error_or_warning():
+                self.errors.extend(self.cells[(x, y)].errors)
 
 
 class BoardCell(RootClass):
@@ -162,14 +182,24 @@ class BoardCell(RootClass):
         raise NotImplementedError
 
 
-class BoardCellWhiteOrBlackOrNone(BoardCell):
+class BoardCellNoneOrNvalues(BoardCell):
+    # values[0] is the null value, i.e. __init__(value=BoardCellNoneOrNvalues.values[0])
+    values = (0, 1, 2)
+
     def __init__(self,
-                 value=None):
-        BoardCell.__init__(self, value)
+                 value=0):
+        if value not in BoardCellNoneOrNvalues.values:
+            BoardCell.__init__(self, None)
+            self.errors.append(
+                Error(f"Error: can't initialize {self.__class__.__name__} object."
+                      f"Incorrect value '{value}' given to initialize the object."
+                      f"Acceptable values are {BoardCellNoneOrNvalues.values}."))
+        else:
+            BoardCell.__init__(self, value)
 
     def get_hashvalue(self):
         """
-            BoardCellWhiteOrBlackOrNone.get_hashvalue()
+            BoardCellNoneOrNvalues.get_hashvalue()
 
             Return a hash value of <self>.
             ___________________________________________________________________
@@ -183,8 +213,9 @@ class BoardCellWhiteOrBlackOrNone(BoardCell):
         return res.digest()
 
 
-board = Board2DCellsRectangle(0, 0, 18, 18, BoardCellWhiteOrBlackOrNone)
+board = Board2DCellsRectangleIntValue((0, 1, 2), 0, 18, 0, 18, BoardCellNoneOrNvalues)
 print(binhash_to_strb85(board.get_hashvalue()))
+print(board.errors)
 
 
 class PlayersDescription(RootClass, dict):

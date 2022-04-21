@@ -1,5 +1,10 @@
 [CURRENT] v. 0.0.1
 
+[DONE] task-3
+
+    * nikw/game now contains gamerules/
+    * classes: BoardCellNoneOrNvalues, Board2DCellsRectangleIntValue
+
 [DONE] task-2
 
 Documentation + hasfuncs
