@@ -118,17 +118,13 @@ class Board(RootClass):
 class Board2DCellsRectangleIntValue(Board):
     def __init__(self,
                  cell_values,
-                 xmin,
-                 xmax,
-                 ymin,
-                 ymax,
+                 xymin,
+                 xymax,
                  boardcell_object):
         Board.__init__(self)
         self.cell_values = cell_values
-        self.xmin = xmin
-        self.xmax = xmax
-        self.ymin = ymin
-        self.ymax = ymax
+        self.xymin = xymin
+        self.xymax = xymax
         self.cells = {}
         self.boardcell_object = boardcell_object
 
@@ -146,30 +142,29 @@ class Board2DCellsRectangleIntValue(Board):
             RETURNED VALUE: (bytes)hash value
         """
         res = hashfunction()
-        for x, y in self.get_all_xy():
-            res.update(self.cells[x, y].get_hashvalue())
+        for xy in self.get_all_xy():
+            res.update(self.cells[xy].get_hashvalue())
         return res.digest()
 
     def get_all_xy(self):
-        for x in range(self.xmin, self.xmax+1):
-            for y in range(self.ymin, self.ymax+1):
+        for x in range(self.xymin[0], self.xymax[0]+1):
+            for y in range(self.xymin[1], self.xymax[1]+1):
                 yield (x, y)
 
     def get_cell(self,
-                 x,
-                 y):
-        return self.cells[(x, y)]
+                 xy):
+        return self.cells[xy]
 
     def set_cell(self,
-                 x, y, value):
-        self.cells[(x, y)] = self.boardcell_object(value)
+                 xy, value):
+        self.cells[xy] = self.boardcell_object(value)
 
     def set_default_cells(self):
-        for (x, y) in self.get_all_xy():
-            self.set_cell(x, y, value=0)
+        for xy in self.get_all_xy():
+            self.set_cell(xy, value=0)
 
-            if not self.get_cell(x, y).errors.zero_error_or_warning():
-                self.errors.extend(self.cells[(x, y)].errors)
+            if not self.get_cell(xy).errors.zero_error_or_warning():
+                self.errors.extend(self.cells[xy].errors)
 
 
 class BoardCell(RootClass):
@@ -213,7 +208,7 @@ class BoardCellNoneOrNvalues(BoardCell):
         return res.digest()
 
 
-board = Board2DCellsRectangleIntValue((0, 1, 2), 0, 18, 0, 18, BoardCellNoneOrNvalues)
+board = Board2DCellsRectangleIntValue((0, 1, 2), (0, 0), (18, 18), BoardCellNoneOrNvalues)
 print(binhash_to_strb85(board.get_hashvalue()))
 print(board.errors)
 

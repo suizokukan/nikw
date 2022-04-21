@@ -1,5 +1,9 @@
 [CURRENT] v. 0.0.1
 
+[DONE] task-4
+
+    * xy syntax instead of (x, y)
+
 [DONE] task-3
 
     * nikw/game now contains gamerules/
