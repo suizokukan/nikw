@@ -19,27 +19,16 @@
 #    along with nikw.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 """
-    nikw project : nikw/nikw.py
+    nikw project : nikw/game/constants.py
 """
-import sys
+DATANATURE_INMEMORY = 0x01
+DATANATURE_DB = 0x02
+DATANATURE_SERIALIZED = 0x03
+DATANATURE_CLIRAWOUTPUT = 0x04
+DATANATURE_CLIRICHOUTPUT = 0x05
+DATANATURE_CLIURWIDOUTPUT = 0x06
 
-from game.gamerules.gamerules import KNOWN_GAMESRULES
-
-
-def main():
-    import importlib
-    try:
-        for gamerule, gamerule_data in KNOWN_GAMESRULES.items():
-            importlib.import_module(gamerule_data[0])
-            print("... imported a new rule:", gamerule)
-    except ModuleNotFoundError:
-        print("TODO/Boom !", gamerule)
-
-
-if __name__ == '__main__':
-    from hashfuncs import binhash_to_strb85
-    from game.baseclasses import Board2DCellsRectangleIntValue, BoardCellNoneOrNvalues
-    board = Board2DCellsRectangleIntValue((0, 1, 2), (0, 0), (18, 18), BoardCellNoneOrNvalues)
-    print(binhash_to_strb85(board.get_hashvalue()))
-    print(board.errors)
-    sys.exit(main())
+PLAYERTYPE__NOPLAYER = 0x01
+PLAYERTYPE__RANDOM = 0x02
+PLAYERTYPE__HUMAN = 0x03
+PLAYERTYPE__AI = 0x04

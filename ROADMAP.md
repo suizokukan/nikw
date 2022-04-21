@@ -1,5 +1,9 @@
 [CURRENT] v. 0.0.1
 
+[DONE] task-5
+
+    * new files
+
 [DONE] task-4
 
     * xy syntax instead of (x, y)

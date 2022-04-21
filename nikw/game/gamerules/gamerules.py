@@ -19,27 +19,10 @@
 #    along with nikw.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 """
-    nikw project : nikw/nikw.py
+    nikw project : nikw/game/gamerules/gamerules.py
 """
-import sys
-
-from game.gamerules.gamerules import KNOWN_GAMESRULES
-
-
-def main():
-    import importlib
-    try:
-        for gamerule, gamerule_data in KNOWN_GAMESRULES.items():
-            importlib.import_module(gamerule_data[0])
-            print("... imported a new rule:", gamerule)
-    except ModuleNotFoundError:
-        print("TODO/Boom !", gamerule)
-
-
-if __name__ == '__main__':
-    from hashfuncs import binhash_to_strb85
-    from game.baseclasses import Board2DCellsRectangleIntValue, BoardCellNoneOrNvalues
-    board = Board2DCellsRectangleIntValue((0, 1, 2), (0, 0), (18, 18), BoardCellNoneOrNvalues)
-    print(binhash_to_strb85(board.get_hashvalue()))
-    print(board.errors)
-    sys.exit(main())
+# KNOWN_GAMESRULES[(str) game rulen name] = ("game rule module",
+#                                            None < will be the imported module
+#                                           )
+KNOWN_GAMESRULES = {"gomokunarabe/3x3;2p":
+                    ("game.gamerules.gomokunarabe_3x3_2p", None,), }
