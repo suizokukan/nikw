@@ -22,6 +22,7 @@
     nikw project : nikw/game/baseclasses.py
 """
 from exc_motherclass.motherclass import MotherClassSerErr
+from hashfuncs import hashfunction
 
 from game.constants import DATANATURE_INMEMORY, PLAYERTYPE__NOPLAYER
 
@@ -116,12 +117,23 @@ class Board(RootClass):
     pass
 
 
-class BoardCell(RootClass):
+class BoardCellIntegerValue(RootClass):
     def __init__(self,
                  int_value=None):
         RootClass.__init__(self)
         self.int_value = int_value
 
-    def hashvalue(self):
-        raise NotImplementedError
+    def get_hashvalue(self):
+        """
+            BoardCellIntegerValue.get_hashvalue()
 
+            Return a hash value of <self>.
+            ___________________________________________________________________
+
+            no PARAMETER
+
+            RETURNED VALUE: (bytes)hash value
+        """
+        res = hashfunction()
+        res.update(str(self.int_value).encode())
+        return res.digest()

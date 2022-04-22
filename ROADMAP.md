@@ -1,5 +1,10 @@
 [CURRENT] v. 0.0.1
 
+[DONE] task-8
+
+    - Board: two implementations
+    - gomokunarabe_19x19/5/;2p
+
 [DONE] task-7
 
     * nikw/game/baseclasses_2Drectint.py

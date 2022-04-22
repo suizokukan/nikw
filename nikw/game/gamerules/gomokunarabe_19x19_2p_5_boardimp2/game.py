@@ -19,17 +19,12 @@
 #    along with nikw.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 """
-    nikw project : nikw/game/gamerules/gamerules.py
+    nikw project : nikw/game/gamerules/gomokunarabe_19x19_2p_5_boardimp2/game.py
 """
-# KNOWN_GAMESRULES[(str) game rule name] = ("game rule module",
-#                                           None < will be the imported module
-#                                          )
-#
 # ! game rule name MUST BE EXACTLY THE ONE DEFINED AS game.py::RULENAME
 # TODO: pimydoc à définir.
-KNOWN_GAMESRULES = \
-    {"gomokunarabe/19x19;2p;5;boardimp1":
-     ("game.gamerules.gomokunarabe_19x19_2p_5_boardimp1", None,),
+RULENAME = "gomokunarabe/19x19;2p;5;boardimp2"
 
-     "gomokunarabe/19x19;2p;5;boardimp2":
-     ("game.gamerules.gomokunarabe_19x19_2p_5_boardimp2", None,), }
+
+class Game:
+    pass
