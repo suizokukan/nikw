@@ -19,32 +19,23 @@
 #    along with nikw.  If not, see <http://www.gnu.org/licenses/>.
 ###############################################################################
 """
-    nikw project : nikw/game/constants.py
+    nikw project : nikw/game/utils.py
 """
-DEFAULT_GAME_CONFIGURATION = {"keep intermediate gamestates": False}
-DEFAULT_FIRSTPLAYER_TURN_INDEX = 0  # if #0, the first player to play will be players_description[0]
-DEFAULT_FIRSTMOVEID = 0
+from game.constants import PLAYERTYPE__NOPLAYER, PLAYERTYPE__RANDOM, PLAYERTYPE__HUMAN, PLAYERTYPE__AI
+from hashfuncs import hashfunction
 
-DATANATURE_INMEMORY = 0x01
-DATANATURE_DB = 0x02
-DATANATURE_SERIALIZED = 0x03
-DATANATURE_CLIRAWOUTPUT = 0x04
-DATANATURE_CLIRICHOUTPUT = 0x05
-DATANATURE_CLIURWIDOUTPUT = 0x06
 
-# conferexplicit_playertype_constant() defined in nikw/game/utils.py
-PLAYERTYPE__NOPLAYER = 0x01
-PLAYERTYPE__RANDOM = 0x02
-PLAYERTYPE__HUMAN = 0x03
-PLAYERTYPE__AI = 0x04
+def explicit_playertype_constant(player_type):
+    """
+    confer constants defined in nikw/game/constants.py
+    """
+    if player_type == PLAYERTYPE__NOPLAYER:
+        return "no player"
+    if player_type == PLAYERTYPE__RANDOM:
+        return "random player"
+    if player_type == PLAYERTYPE__HUMAN:
+        return "human player"
+    if player_type == PLAYERTYPE__AI:
+        return "AI player"
+    raise NotImplementedError
 
-# TODO
-#   explicit_***
-GAMERESULT_UNDEFINED = 0x00
-GAMERESULT_GAMEISOVER = 0x01
-
-# TODO
-#   explicit_***
-PLAYERRESULT_UNDEFINED = 0x00
-PLAYERRESULT_VICTORY = 0x00
-PLAYERRESULT_DRAW = 0x00

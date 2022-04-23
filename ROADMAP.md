@@ -1,5 +1,17 @@
 [CURRENT] v. 0.0.1
 
+* baseclasses_gomokunarabe_NxN_2players > dans nikw/games
+* evaluate_position(last_move=None) > pour accélérer, évaluer depuis le dernier coup
+* je n'aime pas le fait que improved_str() renvoie tantôt une string tantônt olusieurs lignes. > ça marche pourtant avec un simple .append() (pas besoin d'extend()). A documenter dans exc_***.
+* "keep intermediate xxx" n'est pas implémenté
+* nondefaultvalues > playervalues
+  1 constantes supplémentaire: NOPLAYER_ID, PLAYER1_ID, PLAYER2_ID, IMPOSSIBLE_ID
+
+
+[DONE] task-9
+
+    * a gomokunarabe game can be created; the first move can be played
+
 [DONE] task-8
 
     - Board: two implementations

@@ -23,28 +23,45 @@
 """
 import sys
 
-from game.gamerules.gamerules import KNOWN_GAMESRULES
+import game.gamerules.gamerules
 
 
 def main():
     import importlib
     try:
-        for gamerule, gamerule_data in KNOWN_GAMESRULES.items():
-            importlib.import_module(gamerule_data[0])
+        for gamerule, gamerule_data in game.gamerules.gamerules.KNOWN_GAMESRULES.items():
+            new_module = importlib.import_module(gamerule_data[0])
+            gamerule_data[1] = new_module
             print("... imported a new rule:", gamerule)
     except ModuleNotFoundError:
         print("TODO/Boom !", gamerule)
 
 
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    # !!! tous les types sont empruntés au module via getattr: !!!
+    # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    GAME_TYPE = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;2p;5;boardimp1"][1],
+                        "Game")
+    PLAYERDESCRIPTION_TYPE = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;2p;5;boardimp1"][1],
+                                     "PlayerDescription")
+    PLAYERSDESCRIPTION_TYPE = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;2p;5;boardimp1"][1],
+                                      "PlayersDescription")
+
+    from game.constants import PLAYERTYPE__RANDOM
+    P1 = PLAYERDESCRIPTION_TYPE(player_turn_index=0,
+                                player_name="Xavier",
+                                player_type=PLAYERTYPE__RANDOM)
+    P2 = PLAYERDESCRIPTION_TYPE(player_turn_index=1,
+                                player_name="Lionel",
+                                player_type=PLAYERTYPE__RANDOM)
+    PLAYERS = PLAYERSDESCRIPTION_TYPE(nbr_players=2)
+    PLAYERS.append(P1)
+    PLAYERS.append(P2)
+
+    GAME = GAME_TYPE(players_description=PLAYERS)
+    GAME.play_a_move((1,1))
+
+    print(GAME)
+
 if __name__ == '__main__':
-    from hashfuncs import binhash_to_strb85
-    from game.baseclasses import BoardCellIntegerValue
-    from game.baseclasses_2Dboardint import Board2DCellsIntValueIMP1
-    board = Board2DCellsIntValueIMP1(cell_values=(0, 1, 2),
-                                     cell_default_value=0,
-                                     xymin=(0, 0),
-                                     xymax=(18, 18),
-                                     boardcell_object=BoardCellIntegerValue)
-    print(binhash_to_strb85(board.get_hashvalue()))
-    print(board.errors)
     sys.exit(main())

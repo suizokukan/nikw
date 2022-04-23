@@ -29,7 +29,7 @@
 # TODO: pimydoc à définir.
 KNOWN_GAMESRULES = \
     {"gomokunarabe/19x19;2p;5;boardimp1":
-     ("game.gamerules.gomokunarabe_19x19_2p_5_boardimp1", None,),
+     ["game.gamerules.gomokunarabe_19x19_2p_5_boardimp1.game", None,],
 
      "gomokunarabe/19x19;2p;5;boardimp2":
-     ("game.gamerules.gomokunarabe_19x19_2p_5_boardimp2", None,), }
+     ["game.gamerules.gomokunarabe_19x19_2p_5_boardimp2.game", None,], }

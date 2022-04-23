@@ -37,7 +37,26 @@ Board2DCellsIntValueIMP1             Board2DCellsIntValueIMP2
 from hashfuncs import hashfunction
 from exc_errors.errors import ErrorSer as Error
 
-from game.baseclasses import Board, Move
+from game.constants import PLAYERTYPE__NOPLAYER
+from game.utils import explicit_playertype_constant
+from game.baseclasses import Board, Move, Game, PlayerDescription
+
+
+class PlayerDescriptionIntValue(PlayerDescription):
+    def __init__(self,
+                 player_turn_index,
+                 player_name,
+                 cell_intvalue,
+                 player_type=PLAYERTYPE__NOPLAYER):
+        PlayerDescription.__init__(self,
+                                   player_turn_index=player_turn_index,
+                                   player_name=player_name,
+                                   player_type=player_type)
+        self.cell_intvalue = cell_intvalue
+
+    def improved_str(self):
+        return f"'{self.player_name}': {self.cell_intvalue=}; " \
+            f"(id #{self.player_turn_index}/{explicit_playertype_constant(self.player_type)})"
 
 
 class Board2DCellsIntValue(Board):
@@ -45,43 +64,25 @@ class Board2DCellsIntValue(Board):
     Board + 2D rectangular board + Cell(int_value)
     """
     def __init__(self,
-                 cell_values,
+                 cell_acceptable_intvalues,
                  cell_default_value,
                  xymin,  # may be None; in this case xymax is None
                  xymax,  # may be None; in this case xymin is None
-                 boardcell_object):
+                 boardcell_type,
+                 improvedstr_symbols_for_intvalues):
         Board.__init__(self)
-        self.cell_values = cell_values
+        self.cell_acceptable_intvalues = cell_acceptable_intvalues
         self.cell_default_value = cell_default_value
         self.xymin = xymin  # may be None
         self.xymax = xymax  # may be None
         self.cells = {}
-        self.boardcell_object = boardcell_object
-
+        self.boardcell_type = boardcell_type
+        self.xymin_xymax_nondefaultvalues = None  # None or ((xmin, ymin), (xmax, ymax))
+        self.improvedstr_symbols_for_intvalues = improvedstr_symbols_for_intvalues
         self.set_cells_to_default_value()
 
-    def get_cell(self,
-                 xy):
-        raise NotImplementedError
-
-    def set_cell(self,
-                 xy,
-                 int_value):
-        if not self.is_xy_inside_fixed_limits(xy):
-            self.errors.append(
-                Error(f"Error: can't initialize a cell in a {self.__class__.__name__} object."
-                      f"Incorrect value '{int_value}' given to initialize the object."
-                      f"Acceptable values are {self.cell_values}."))
-
-        elif int_value not in self.cell_values:
-            self.errors.append(
-                Error(f"Error: can't initialize a cell in a {self.__class__.__name__} object."
-                      f"Incorrect xy '{xy}' given to initialize the object."
-                      f"Acceptable values are {self.xymin} / {self.xymax}."))
-        else:
-            self.cells[xy] = self.boardcell_object(int_value)
-
-    def set_cells_to_default_value(self):
+    def is_a_cell_set_to_default_value(self,
+                                       xy):
         raise NotImplementedError
 
     def is_xy_inside_fixed_limits(self,
@@ -94,6 +95,67 @@ class Board2DCellsIntValue(Board):
         # real test with the defined limits:
         return (self.xymin[0] <= xy[0] <= self.xymax[0]) and \
             (self.xymin[1] <= xy[1] <= self.xymax[1])
+
+    def get_cell(self,
+                 xy):
+        raise NotImplementedError
+
+    def improved_str(self):
+        ((xmin, ymin), (xmax, ymax)) = self.xymin_xymax_nondefaultvalues
+
+        res = []
+
+        for y in range(ymin, ymax+1):
+            line = []
+            for x in range(xmin, xmax+1):
+                line.append(self.improvedstr_symbols_for_intvalues[self.cells[(x, y)].int_value])
+            res.append("".join(line))
+
+        return "\n".join(res)
+
+    def set_cell(self,
+                 xy,
+                 int_value):
+        if not self.is_xy_inside_fixed_limits(xy):
+            self.errors.append(
+                Error(f"Error: can't initialize a cell in a {self.__class__.__name__} object."
+                      f"Incorrect value '{int_value}' given to initialize the object."
+                      f"Acceptable values are {self.cell_acceptable_intvalues}."))
+
+        elif int_value not in self.cell_acceptable_intvalues:
+            self.errors.append(
+                Error(f"Error: can't initialize a cell in a {self.__class__.__name__} object."
+                      f"Incorrect xy '{xy}' given to initialize the object."
+                      f"Acceptable values are {self.xymin} / {self.xymax}."))
+        else:
+            self.update__xymin_xymax_nondefaultvalues(xy)
+            self.cells[xy] = self.boardcell_type(int_value)
+
+    def set_cells_to_default_value(self):
+        raise NotImplementedError
+
+    def update__xymin_xymax_nondefaultvalues(self,
+                                             xy):
+        if self.xymin_xymax_nondefaultvalues is None:
+            self.xymin_xymax_nondefaultvalues = xy
+        else:
+            self.xymin_xymax_nondefaultvalues = [[0, 0], [0, 0]]
+            x, y = xy
+            self.xymin_xymax_nondefaultvalues[0][0] = \
+                min(x,
+                    self.xymin_xymax_nondefaultvalues[0][0])
+
+            self.xymin_xymax_nondefaultvalues[0][1] = \
+                min(y,
+                    self.xymin_xymax_nondefaultvalues[0][1])
+
+            self.xymin_xymax_nondefaultvalues[1][0] = \
+                max(x,
+                    self.xymin_xymax_nondefaultvalues[1][0])
+
+            self.xymin_xymax_nondefaultvalues[1][1] = \
+                max(y,
+                    self.xymin_xymax_nondefaultvalues[1][1])
 
 
 class Board2DCellsIntValueIMP1(Board2DCellsIntValue):
@@ -127,6 +189,10 @@ class Board2DCellsIntValueIMP1(Board2DCellsIntValue):
         for xy in self.get_all_xy():
             res.update(self.cells[xy].get_hashvalue())
         return res.digest()
+
+    def is_a_cell_set_to_default_value(self,
+                                       xy):
+        return self.cells[xy].int_value == self.cell_default_value
 
     def set_cells_to_default_value(self):
         for xy in self.get_all_xy():
@@ -169,6 +235,10 @@ class Board2DCellsIntValueIMP2(Board2DCellsIntValue):
             res.update(value.get_hashvalue())
         return res.digest()
 
+    def is_a_cell_set_to_default_value(self,
+                                       xy):
+        return xy not in self.cells
+
     def set_cells_to_default_value(self):
         """
             Board2DCellsIntValueIMP2.set_cells_to_default_value()
@@ -178,7 +248,49 @@ class Board2DCellsIntValueIMP2(Board2DCellsIntValue):
 
 class Move2DCellsRectangleIntValue(Move):
     def __init__(self,
-                 player_id,
+                 player_turn_index,
                  xy):
-        Move.__init__(self, player_id)
+        Move.__init__(self, player_turn_index)
         self.xy = xy
+
+    def improved_str(self):
+        return f"player id #{self.player_turn_index} at {self.xy}"
+
+
+class Game2DCellsRectangleIntValue(Game):
+
+    def apply_a_move_to_current_gamestate(self,
+                                          move):
+        """
+        <move> must be valid.
+        """
+        int_value = self.players_description[move.player_turn_index].cell_intvalue
+        self.current_gamestate.board.cells[move.xy] = \
+            self.current_gamestate.board.boardcell_type(int_value)
+
+    def is_a_validmove(self,
+                       move):
+        """
+        Is it possible to apply <move> to the last gameresult ?
+        """
+        if not move.player_turn_index == self.current_gamestate.next_player_turn_index:
+            return False
+        if not self.current_gamestate.board.is_a_cell_set_to_default_value(move.xy):
+            return False
+        return True
+
+    def play_a_move(self,
+                    xy):
+        move = self.move_type(self.current_gamestate.next_player_turn_index, xy)
+
+        if self.is_a_validmove(move):
+            self.apply_a_move_to_current_gamestate(move)
+            self.moves[self.current_gamestate.next_moveid] = (move,)
+            self.current_gamestate.next_moveid += 1
+
+            if self.current_gamestate.next_player_turn_index < self.players_description.nbr_players:
+                self.current_gamestate.next_player_turn_index += 1
+            else:
+                self.current_gamestate.next_player_turn_index = self.first_player_turn_index
+        else:
+            self.errors.append(Error(f"Error: invalid move {move}."))

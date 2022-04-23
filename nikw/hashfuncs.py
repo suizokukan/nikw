@@ -55,22 +55,28 @@ def strb85_to_binhash(string):
 
 def binhash_to_strb85(_bytes, maxlen=None):
     """
+    TODO
+    la chaîne en sortie doit pouvoir être utilisée sur la ligne de commande comme option
+    ET comme nom de fichier.
+
         pimydoc:modified base85
         “ Default Ascii85 specifications:
         “ https://fr.wikipedia.org/wiki/Ascii85
         “
         “ Default Ascii85 characters: 0–9, A–Z, a–z, !#$%&()*+-;<=>?@^_`{|}~
-        “ Modified base85 characters: 0–9, A–Z, a–z, !#.%&()*+-,<=>?@^_/{|}~
+        “ Modified base85 characters: 0–9, A–Z, a–z, !#æ%&()ë+-,<=>?@^_°{|}~
         “
         “ NB : ';' is replaced by ',' due to a problem with StrQuasiDictCommandString strings
-        “ NB : '$' is replaced by '.' due to a problem with command line options
-        “ NB : '`' is replaced by '/' due to a problem with command line options
+        “ NB : '$' is replaced by 'æ' due to a problem with command line options
+        “ NB : '`' is replaced by '°' due to a problem with command line options
+        “ NB : '*' is replaced by 'ë' due to a problem with filenames
         “
     """
     string = base64.b85encode(_bytes).decode()
     string = string.replace(";", ",")
-    string = string.replace("$", ".")
-    string = string.replace("`", "/")
+    string = string.replace("$", "æ")
+    string = string.replace("`", "°")
+    string = string.replace("*", "ë")
 
     if maxlen is None:
         return string
