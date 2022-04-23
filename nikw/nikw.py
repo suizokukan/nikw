@@ -36,7 +36,6 @@ def main():
     except ModuleNotFoundError:
         print("TODO/Boom !", gamerule)
 
-
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # !!! tous les types sont empruntés au module via getattr: !!!
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -59,9 +58,10 @@ def main():
     PLAYERS.append(P2)
 
     GAME = GAME_TYPE(players_description=PLAYERS)
-    GAME.play_a_move((1,1))
+    GAME.play_a_move((1, 1))
 
     print(GAME)
+
 
 if __name__ == '__main__':
     sys.exit(main())

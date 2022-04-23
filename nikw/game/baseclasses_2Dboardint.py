@@ -37,7 +37,7 @@ Board2DCellsIntValueIMP1             Board2DCellsIntValueIMP2
 from hashfuncs import hashfunction
 from exc_errors.errors import ErrorSer as Error
 
-from game.constants import PLAYERTYPE__NOPLAYER
+from game.constants import PLAYERTYPE__NOPLAYER, CELL_INTVALUE_PLAYERS
 from game.utils import explicit_playertype_constant
 from game.baseclasses import Board, Move, Game, PlayerDescription
 
@@ -46,13 +46,15 @@ class PlayerDescriptionIntValue(PlayerDescription):
     def __init__(self,
                  player_turn_index,
                  player_name,
-                 cell_intvalue,
                  player_type=PLAYERTYPE__NOPLAYER):
-        PlayerDescription.__init__(self,
-                                   player_turn_index=player_turn_index,
-                                   player_name=player_name,
-                                   player_type=player_type)
-        self.cell_intvalue = cell_intvalue
+        PlayerDescription.__init__(
+            self,
+            player_turn_index=player_turn_index,
+            player_name=player_name,
+            player_type=player_type)
+
+        # TODO: si player_turn_index est trop grand, boom.
+        self.cell_intvalue = CELL_INTVALUE_PLAYERS[player_turn_index]
 
     def improved_str(self):
         return f"'{self.player_name}': {self.cell_intvalue=}; " \

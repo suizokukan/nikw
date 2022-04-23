@@ -7,6 +7,10 @@
 * nondefaultvalues > playervalues
   1 constantes supplémentaire: NOPLAYER_ID, PLAYER1_ID, PLAYER2_ID, IMPOSSIBLE_ID
 
+[DONE] task-10
+
+    * gomokunarabe_19x19_2p_5_boardimp1/game.py has now new constants
+      XYMIN, XYMAX, NBR_PLAYERS
 
 [DONE] task-9
 

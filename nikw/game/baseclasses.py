@@ -139,10 +139,10 @@ class GameState(RootClass):
 
 class GameResult(RootClass):
     def __init__(self,
-                 players_ids):
+                 nbr_players):
         self.result = GAMERESULT_UNDEFINED
         self.players_results = {}
-        for player_turn_index in players_ids:
+        for player_turn_index in range(nbr_players):
             self.players_results[player_turn_index] = PLAYERRESULT_UNDEFINED
 
     def improved_str(self):
