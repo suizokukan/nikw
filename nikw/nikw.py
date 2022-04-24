@@ -33,17 +33,17 @@ def main():
             new_module = importlib.import_module(gamerule_data[0])
             gamerule_data[1] = new_module
             print("... imported a new rule:", gamerule)
-    except ModuleNotFoundError:
-        print("TODO/Boom !", gamerule)
+    except ModuleNotFoundError as err:
+        print("TODO/Boom !", err, gamerule)
 
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # !!! tous les types sont empruntés au module via getattr: !!!
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    GAME_TYPE = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;2p;5;boardimp1"][1],
+    GAME_TYPE = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;5;2p;boardimp1"][1],
                         "Game")
-    PLAYERDESCRIPTION_TYPE = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;2p;5;boardimp1"][1],
+    PLAYERDESCRIPTION_TYPE = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;5;2p;boardimp1"][1],
                                      "PlayerDescription")
-    PLAYERSDESCRIPTION_TYPE = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;2p;5;boardimp1"][1],
+    PLAYERSDESCRIPTION_TYPE = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;5;2p;boardimp1"][1],
                                       "PlayersDescription")
 
     from game.constants import PLAYERTYPE__RANDOM
@@ -53,7 +53,7 @@ def main():
     P2 = PLAYERDESCRIPTION_TYPE(player_turn_index=1,
                                 player_name="Lionel",
                                 player_type=PLAYERTYPE__RANDOM)
-    PLAYERS = PLAYERSDESCRIPTION_TYPE(nbr_players=2)
+    PLAYERS = PLAYERSDESCRIPTION_TYPE()
     PLAYERS.append(P1)
     PLAYERS.append(P2)
 

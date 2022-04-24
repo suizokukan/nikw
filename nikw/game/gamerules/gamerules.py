@@ -28,8 +28,8 @@
 # ! game rule name MUST BE EXACTLY THE ONE DEFINED AS game.py::RULENAME
 # TODO: pimydoc à définir.
 KNOWN_GAMESRULES = \
-    {"gomokunarabe/19x19;2p;5;boardimp1":
-     ["game.gamerules.gomokunarabe_19x19_2p_5_boardimp1.game", None,],
+    {"gomokunarabe/19x19;5;2p;boardimp1":
+     ["game.gamerules.gomokunarabe_19x19_5_2p_boardimp1.game", None,],
 
-     "gomokunarabe/19x19;2p;5;boardimp2":
-     ["game.gamerules.gomokunarabe_19x19_2p_5_boardimp2.game", None,], }
+     "gomokunarabe/19x19;5;2p;boardimp2":
+     ["game.gamerules.gomokunarabe_19x19_5_2p_boardimp2.game", None,], }

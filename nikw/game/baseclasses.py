@@ -85,7 +85,7 @@ class Game(RootClass):
             next_player_turn_index=self.players_description.first_player_turn_index,
             next_moveid=self.moves.first_moveid,
             board=self.board_type(),
-            gameresult=self.gameresult_type())
+            gameresult=self.gameresult_type(nbr_players=len(self.players_description)))
 
     def get_gameid(self):
         res = hashfunction()
