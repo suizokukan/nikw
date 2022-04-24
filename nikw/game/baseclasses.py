@@ -29,7 +29,7 @@ from hashfuncs import hashfunction, binhash_to_strb85
 from game.constants import DEFAULT_GAME_CONFIGURATION
 from game.constants import DEFAULT_FIRSTPLAYER_TURN_INDEX, DEFAULT_FIRSTMOVEID
 from game.constants import DATANATURE_INMEMORY, PLAYERTYPE__NOPLAYER
-from game.constants import GAMERESULT_UNDEFINED, PLAYERRESULT_UNDEFINED
+from game.constants import GAMEMAINRESULT_UNDEFINED, PLAYERRESULT_UNDEFINED
 from game.utils import explicit_playertype_constant
 
 
@@ -74,7 +74,7 @@ class Game(GameRootClass):
                  move_type,
                  moves_type,
                  gamestate_type,
-                 gameresult_type,
+                 gameresults_type,
                  configuration=DEFAULT_GAME_CONFIGURATION):
         GameRootClass.__init__(self)
 
@@ -93,7 +93,7 @@ class Game(GameRootClass):
         self.moves_type = moves_type
         self.moves = moves_type()
 
-        self.gameresult_type = gameresult_type
+        self.gameresults_type = gameresults_type
 
         self.gamestate_type = gamestate_type
         self.current_gamestate = gamestate_type(
@@ -102,7 +102,7 @@ class Game(GameRootClass):
             nbr_players=len(self.players_description),
             first_player_turn_index=DEFAULT_FIRSTPLAYER_TURN_INDEX,
             board=self.board_type(),
-            gameresult=self.gameresult_type(nbr_players=len(self.players_description)))
+            gameresults=self.gameresults_type(nbr_players=len(self.players_description)))
 
     def get_gameid(self):
         res = hashfunction()
@@ -133,9 +133,12 @@ class Game(GameRootClass):
 class GameState(GameRootClass):
     def __init__(self,
                  board,
-                 gameresult):
+                 gameresults):
         self.board = board
-        self.gameresult = gameresult
+        self.gameresults = gameresults
+
+    def update_results_from_current_board(self):
+        raise NotImplementedError
 
 
 class GameStatePlayersInSetOrder(GameState):
@@ -145,22 +148,14 @@ class GameStatePlayersInSetOrder(GameState):
                  nbr_players,
                  first_player_turn_index,
                  board,
-                 gameresult):
+                 gameresults):
         self.nbr_players = nbr_players
         self.first_player_turn_index = first_player_turn_index
         self.next_player_turn_index = next_player_turn_index
         self.next_moveid = next_moveid
         GameState.__init__(self,
                            board=board,
-                           gameresult=gameresult)
-
-    def setup_next_move_and_next_player(self):
-        self.next_moveid += 1
-
-        if self.next_player_turn_index < self.nbr_players-1:
-            self.next_player_turn_index += 1
-        else:
-            self.next_player_turn_index = self.first_player_turn_index
+                           gameresults=gameresults)
 
     def improved_str(self):
         res = []
@@ -170,22 +165,30 @@ class GameStatePlayersInSetOrder(GameState):
         if self.next_player_turn_index == 0:
             res.append(f"o  game result: the game has not begun.")
         else:
-            res.append(f"o  game result: {self.gameresult.improved_str()}")
+            res.append(f"o  game result: {self.gameresults.improved_str()}")
         res.append(self.board.improved_str())
         return "\n".join(res)
 
+    def setup_next_move_and_next_player(self):
+        self.next_moveid += 1
 
-class GameResult(GameRootClass):
+        if self.next_player_turn_index < self.nbr_players-1:
+            self.next_player_turn_index += 1
+        else:
+            self.next_player_turn_index = self.first_player_turn_index
+
+
+class GameResults(GameRootClass):
     def __init__(self,
                  nbr_players):
-        self.result = GAMERESULT_UNDEFINED
+        self.mainresult = GAMEMAINRESULT_UNDEFINED
         self.players_results = {}
         for player_turn_index in range(nbr_players):
             self.players_results[player_turn_index] = PLAYERRESULT_UNDEFINED
 
     def improved_str(self):
-        # TODO: explicit self.result + self.players_results
-        return f"{self.result=}; {self.players_results=}"
+        # TODO: explicit self.mainresult + self.players_results
+        return f"{self.mainresult=}; {self.players_results=}"
 
 
 class Moves(GameRootClass, dict):

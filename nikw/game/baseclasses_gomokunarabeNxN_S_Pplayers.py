@@ -21,11 +21,12 @@
 """
     nikw project : nikw/game/baseclasses_gomokunarabeNxN_S_Pplayers.py
 """
-from game.baseclasses import GameResult as RootGameResult
+from game.baseclasses import GameResults as RootGameResults
 from game.baseclasses_2Dboardint import PlayerDescriptionIntValue
 from game.baseclasses import PlayersDescription as RootPlayersDescription
 from game.baseclasses_2Dboardint import Game2DCellsRectangleIntValue, Move2DCellsRectangleIntValue
-from game.baseclasses import Moves, GameStatePlayersInSetOrder
+from game.baseclasses import Moves
+from game.baseclasses import GameStatePlayersInSetOrder
 
 
 class PlayersDescription(RootPlayersDescription):
@@ -36,16 +37,51 @@ class PlayerDescription(PlayerDescriptionIntValue):
     pass
 
 
-class GameResult(RootGameResult):
+class GameResults(RootGameResults):
     pass
+
+
+class GameState(GameStatePlayersInSetOrder):
+    def __init__(self,
+                 next_player_turn_index,
+                 next_moveid,
+                 nbr_players,
+                 first_player_turn_index,
+                 board,
+                 gameresults,
+                 alignement_length):
+        self.alignement_length = alignement_length
+        GameStatePlayersInSetOrder.__init__(
+            self,
+            next_player_turn_index=next_player_turn_index,
+            next_moveid=next_moveid,
+            nbr_players=nbr_players,
+            first_player_turn_index=first_player_turn_index,
+            board=board,
+            gameresults=gameresults)
+
+    def is_board_a_winning_position(self,
+                                    last_move=None):
+        # TODO
+        #   dans un premier temps je ne tiens pas compte de <last_move>
+        winning_position, who_won = 777, 888
+        return winning_position, who_won
+
+    def update_results_from_current_board(self,
+                                          last_move=None):
+        winning_position, who_won = self.is_board_a_winning_position(last_move)
+        self.gameresults.mainresult = 777
 
 
 class Game(Game2DCellsRectangleIntValue):
     def __init__(self,
                  rules_name,
                  board_type,
+                 gamestate_type,
                  players_description,
+                 alignement_length,
                  ):
+        self.alignement_length = alignement_length
         Game2DCellsRectangleIntValue.__init__(
             self,
             rules_name=rules_name,
@@ -53,5 +89,5 @@ class Game(Game2DCellsRectangleIntValue):
             players_description=players_description,
             move_type=Move2DCellsRectangleIntValue,
             moves_type=Moves,
-            gamestate_type=GameStatePlayersInSetOrder,
-            gameresult_type=GameResult)
+            gamestate_type=gamestate_type,
+            gameresults_type=GameResults)

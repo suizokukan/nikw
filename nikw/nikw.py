@@ -68,6 +68,8 @@ def main():
     GAME.play_a_move((0, 3))
     GAME.play_a_move((1, 4))
     print(GAME)
+    from iaswn import Iaswn, encode, decode, IaswnEncoder, IaswnError, to_jsonstr
+    print(GAME.to_jsonstr())
 
 
 if __name__ == '__main__':

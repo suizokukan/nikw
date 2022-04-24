@@ -26,6 +26,8 @@ from game.baseclasses import PlayersDescription as RootPlayersDescription
 from game.baseclasses_2Dboardint import Board2DCellsIntValueIMP1, PlayerDescriptionIntValue
 from game.constants import CELL_INTVALUE_PLAYERS, CELL_INTVALUE_NOPLAYER, IMPROVEDSTR_SYMBOLS_FOR_INTVALUES
 from game.baseclasses_gomokunarabeNxN_S_Pplayers import Game as RootGame
+from game.baseclasses_gomokunarabeNxN_S_Pplayers import GameState as RootGameState
+from game.baseclasses import GameStatePlayersInSetOrder
 
 
 # ! game rule name MUST BE EXACTLY THE ONE DEFINED AS game.py::RULESNAME
@@ -34,6 +36,8 @@ RULESNAME = "gomokunarabe/19x19;5;2p;boardimp1"
 
 XYMIN = (-10, -10)
 XYMAX = (8, 8)
+
+ALIGNEMENT_LENGTH = 5
 
 NBR_PLAYERS = 2
 
@@ -62,10 +66,31 @@ class Board(Board2DCellsIntValueIMP1):
             improvedstr_symbols_for_intvalues=IMPROVEDSTR_SYMBOLS_FOR_INTVALUES)
 
 
+class GameState(RootGameState):
+    def __init__(self,
+                 next_player_turn_index,
+                 next_moveid,
+                 nbr_players,
+                 first_player_turn_index,
+                 board,
+                 gameresults):
+        RootGameState.__init__(
+            self,
+            next_player_turn_index=next_player_turn_index,
+            next_moveid=next_moveid,
+            nbr_players=nbr_players,
+            first_player_turn_index=first_player_turn_index,
+            board=board,
+            gameresults=gameresults,
+            alignement_length=ALIGNEMENT_LENGTH)
+
+
 class Game(RootGame):
     def __init__(self,
                  players_description):
         RootGame.__init__(self,
                           rules_name=RULESNAME,
                           board_type=Board,
-                          players_description=players_description)
+                          gamestate_type=GameState,
+                          players_description=players_description,
+                          alignement_length=ALIGNEMENT_LENGTH)

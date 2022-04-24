@@ -1,11 +1,19 @@
 [CURRENT] v. 0.0.1
 
+* il faut réussir à sauvegarder/charger une partie pour ...
+  * tester pour ...
+    * tester la fonction is_a_winning_pos()
+    
 * cartographier les classes, ça devient compliqué
 * evaluate_position(last_move=None) > pour accélérer, évaluer si possible depuis le dernier coup
 * je n'aime pas le fait que improved_str() renvoie tantôt une string tantônt olusieurs lignes. > ça marche pourtant avec un simple .append() (pas besoin d'extend()). A documenter dans exc_***.
 * "keep intermediate xxx" n'est pas implémenté
 * nondefaultvalues > playervalues (à cause de valeurs comme IMPOSSIBLE)
 * ne pas oublier de finir le développement de imp2 pour le Board
+
+[DONE] task-15
+
+    * gameresult > gameresults, GameResult > GameResults
 
 [DONE] task-14
 

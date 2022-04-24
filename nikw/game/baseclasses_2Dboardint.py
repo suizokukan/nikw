@@ -342,6 +342,23 @@ class Move2DCellsRectangleIntValue(Move):
 
 class Game2DCellsRectangleIntValue(Game):
 
+    def __init__(self,
+                 rules_name,
+                 board_type,
+                 players_description,
+                 move_type,
+                 moves_type,
+                 gamestate_type,
+                 gameresults_type):
+        Game.__init__(self,
+                      rules_name=rules_name,
+                      board_type=board_type,
+                      players_description=players_description,
+                      move_type=move_type,
+                      moves_type=moves_type,
+                      gamestate_type=gamestate_type,
+                      gameresults_type=gameresults_type)
+
     def apply_a_move_to_current_gamestate(self,
                                           move):
         """
@@ -370,6 +387,7 @@ class Game2DCellsRectangleIntValue(Game):
             self.apply_a_move_to_current_gamestate(move)
             self.moves[self.current_gamestate.next_moveid] = (move,)
 
+            self.current_gamestate.update_results_from_current_board(last_move=move)
             self.current_gamestate.setup_next_move_and_next_player()
         else:
             self.errors.append(Error(f"Error: invalid move {move}."))
