@@ -7,6 +7,10 @@
 * nondefaultvalues > playervalues (à cause de valeurs comme IMPOSSIBLE)
 * ne pas oublier de finir le développement de imp2 pour le Board
 
+[DONE] task-14
+
+    RootClass > GameRootClass
+
 [DONE] task-13
 
     * GameStatePlayersInSetOrder class
