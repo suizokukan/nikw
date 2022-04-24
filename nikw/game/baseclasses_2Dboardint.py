@@ -68,8 +68,8 @@ class Board2DCellsIntValue(Board):
     def __init__(self,
                  cell_acceptable_intvalues,
                  cell_default_value,
-                 xymin,  # may be None; in this case xymax is None
-                 xymax,  # may be None; in this case xymin is None
+                 xymin,  # may be None; in this case xymax is also None
+                 xymax,  # may be None; in this case xymin is also None
                  boardcell_type,
                  improvedstr_symbols_for_intvalues):
         Board.__init__(self)
@@ -103,17 +103,7 @@ class Board2DCellsIntValue(Board):
         raise NotImplementedError
 
     def improved_str(self):
-        ((xmin, ymin), (xmax, ymax)) = self.xymin_xymax_nondefaultvalues
-
-        res = []
-
-        for y in range(ymin, ymax+1):
-            line = []
-            for x in range(xmin, xmax+1):
-                line.append(self.improvedstr_symbols_for_intvalues[self.cells[(x, y)].int_value])
-            res.append("".join(line))
-
-        return "\n".join(res)
+        raise NotImplementedError
 
     def set_cell(self,
                  xy,
@@ -139,7 +129,7 @@ class Board2DCellsIntValue(Board):
     def update__xymin_xymax_nondefaultvalues(self,
                                              xy):
         if self.xymin_xymax_nondefaultvalues is None:
-            self.xymin_xymax_nondefaultvalues = xy
+            self.xymin_xymax_nondefaultvalues = xy, xy
         else:
             self.xymin_xymax_nondefaultvalues = [[0, 0], [0, 0]]
             x, y = xy
@@ -178,7 +168,7 @@ class Board2DCellsIntValueIMP1(Board2DCellsIntValue):
 
     def get_hashvalue(self):
         """
-            Board2DCellsIntValue.get_hashvalue()
+            Board2DCellsIntValueIMP1.get_hashvalue()
 
             Return a hash value of <self>.
             ___________________________________________________________________
@@ -191,6 +181,97 @@ class Board2DCellsIntValueIMP1(Board2DCellsIntValue):
         for xy in self.get_all_xy():
             res.update(self.cells[xy].get_hashvalue())
         return res.digest()
+
+    def improved_str(self):
+        """
+            Board2DCellsIntValueIMP1.improved_str()
+
+                                      vertical dial (right)
+                                       ^^^^^
+
+             vertical dial (left)
+             ^^^^^
+
+                   -10  -5   +0   +5              horizontal dial (above) : line #1
+                   |----|----|----|---            horizontal dial (above) : line #2
+             -10 - ................... - -10      |
+                 | ................... |          |
+                 | ................... |          |
+                 | ................... |          |
+                 | ................... |          |
+             -5  - ................... - -5       |
+                 | ................... |          |
+                 | ................... |          |
+                 | ................... |          |   cells lines
+                 | ................... |          |
+             +0  - ................... - +0       |
+                 | ...........X....... |          |
+                 | ................... |          |
+                 | ................... |          |
+                 | ................... |          |
+             +5  - ................... - +5       |
+                 | ................... |          |
+                 | ................... |          |
+                 | ................... |          |
+                   |----|----|----|---            horizontal dial (below) : line #1
+                   -10  -5   +0   +5              horizontal dial (below) : line #2
+        """
+        ((xmin, ymin), (xmax, ymax)) = self.xymin, self.xymax
+
+        res = []
+
+        # horizontal dial (above) : line #1
+        line = [" ", ] * len(range(xmin, xmax))
+        for x in range(xmin, xmax+1):
+            if x % 5 == 0:
+                number_str = f"{x:+}"
+                for index_character, character in enumerate(number_str):
+                    line[-xmin+x+index_character] = character
+        line = [" " * 7, ] + line
+        hdial_numbers = "".join(line)
+        res.append(hdial_numbers)
+
+        # horizontal dial (above) : line #2
+        line = [" " * 7, ]
+        for x in range(xmin, xmax+1):
+            if x % 5 == 0:
+                line.append("|")
+            else:
+                line.append("-")
+        hdial_separator = "".join(line)
+        res.append(hdial_separator)
+
+        # cells lines:
+        for y in range(ymin, ymax+1):
+            line = []
+
+            # vertical dial (left):
+            if y % 5 == 0:
+                y_str = " {0:<3} - ".format(f"{y:+d}")
+            else:
+                y_str = (" " * 5) + "| "
+            line.append(y_str)
+
+            # cell line:
+            for x in range(xmin, xmax+1):
+                line.append(self.improvedstr_symbols_for_intvalues[self.cells[(x, y)].int_value])
+
+            # vertical dial (right):
+            if y % 5 == 0:
+                y_str = " - {0:<3}".format(f"{y:+d}")
+            else:
+                y_str = " | " + (" " * 5)
+            line.append(y_str)
+
+            res.append("".join(line))
+
+        # horizontal dial (below) : line #1
+        res.append(hdial_separator)
+
+        # horizontal dial (below) : line #2
+        res.append(hdial_numbers)
+
+        return "\n".join(res)
 
     def is_a_cell_set_to_default_value(self,
                                        xy):

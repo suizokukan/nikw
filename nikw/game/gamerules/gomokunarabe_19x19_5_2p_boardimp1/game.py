@@ -32,8 +32,8 @@ from game.baseclasses_gomokunarabeNxN_S_Pplayers import Game as RootGame
 # TODO: pimydoc à définir.
 RULESNAME = "gomokunarabe/19x19;5;2p;boardimp1"
 
-XYMIN = (0, 0)
-XYMAX = (18, 18)
+XYMIN = (-10, -10)
+XYMAX = (8, 8)
 
 NBR_PLAYERS = 2
 

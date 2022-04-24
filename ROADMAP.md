@@ -6,6 +6,10 @@
 * nondefaultvalues > playervalues (à cause de valeurs comme IMPOSSIBLE)
 * ne pas oublier de finir le développement de imp2 pour le Board
 
+[DONE] task-12
+
+    * Board2DCellsIntValueIMP1.improved_str()
+
 [DONE] task-11
 
     * new code structure:

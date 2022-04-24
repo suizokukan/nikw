@@ -30,6 +30,4 @@
 KNOWN_GAMESRULES = \
     {"gomokunarabe/19x19;5;2p;boardimp1":
      ["game.gamerules.gomokunarabe_19x19_5_2p_boardimp1.game", None,],
-
-     "gomokunarabe/19x19;5;2p;boardimp2":
-     ["game.gamerules.gomokunarabe_19x19_5_2p_boardimp2.game", None,], }
+     }

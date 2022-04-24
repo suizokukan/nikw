@@ -44,6 +44,19 @@ class RootClass(MotherClassSerErr):
                   expected_data_type=DATANATURE_INMEMORY):
         raise NotImplementedError
 
+    def get_hashvalue(self):
+        """
+            RootClass.get_hashvalue()
+
+            Return a hash value of <self>.
+            ___________________________________________________________________
+
+            no PARAMETER
+
+            RETURNED VALUE: (bytes)hash value
+        """
+        raise NotImplementedError
+
     def init_from(self,
                   source,
                   source_type=DATANATURE_INMEMORY):
