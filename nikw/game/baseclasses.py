@@ -76,6 +76,8 @@ class Game(RootClass):
                  gamestate_type,
                  gameresult_type,
                  configuration=DEFAULT_GAME_CONFIGURATION):
+        RootClass.__init__(self)
+
         self.configuration = configuration
 
         self.rules_name = rules_name
@@ -97,6 +99,8 @@ class Game(RootClass):
         self.current_gamestate = gamestate_type(
             next_player_turn_index=self.players_description.first_player_turn_index,
             next_moveid=self.moves.first_moveid,
+            nbr_players=len(self.players_description),
+            first_player_turn_index=DEFAULT_FIRSTPLAYER_TURN_INDEX,
             board=self.board_type(),
             gameresult=self.gameresult_type(nbr_players=len(self.players_description)))
 
@@ -128,14 +132,35 @@ class Game(RootClass):
 
 class GameState(RootClass):
     def __init__(self,
-                 next_player_turn_index,
-                 next_moveid,
                  board,
                  gameresult):
-        self.next_player_turn_index = next_player_turn_index
-        self.next_moveid = next_moveid
         self.board = board
         self.gameresult = gameresult
+
+
+class GameStatePlayersInSetOrder(GameState):
+    def __init__(self,
+                 next_player_turn_index,
+                 next_moveid,
+                 nbr_players,
+                 first_player_turn_index,
+                 board,
+                 gameresult):
+        self.nbr_players = nbr_players
+        self.first_player_turn_index = first_player_turn_index
+        self.next_player_turn_index = next_player_turn_index
+        self.next_moveid = next_moveid
+        GameState.__init__(self,
+                           board=board,
+                           gameresult=gameresult)
+
+    def setup_next_move_and_next_player(self):
+        self.next_moveid += 1
+
+        if self.next_player_turn_index < self.nbr_players-1:
+            self.next_player_turn_index += 1
+        else:
+            self.next_player_turn_index = self.first_player_turn_index
 
     def improved_str(self):
         res = []

@@ -59,7 +59,14 @@ def main():
 
     GAME = GAME_TYPE(players_description=PLAYERS)
     GAME.play_a_move((1, 1))
-
+    GAME.play_a_move((0, 0))
+    GAME.play_a_move((1, 0))
+    GAME.play_a_move((0, 1))
+    GAME.play_a_move((1, 2))
+    GAME.play_a_move((0, 2))
+    GAME.play_a_move((1, 3))
+    GAME.play_a_move((0, 3))
+    GAME.play_a_move((1, 4))
     print(GAME)
 
 

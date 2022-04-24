@@ -369,11 +369,7 @@ class Game2DCellsRectangleIntValue(Game):
         if self.is_a_validmove(move):
             self.apply_a_move_to_current_gamestate(move)
             self.moves[self.current_gamestate.next_moveid] = (move,)
-            self.current_gamestate.next_moveid += 1
 
-            if self.current_gamestate.next_player_turn_index < self.players_description.nbr_players:
-                self.current_gamestate.next_player_turn_index += 1
-            else:
-                self.current_gamestate.next_player_turn_index = self.first_player_turn_index
+            self.current_gamestate.setup_next_move_and_next_player()
         else:
             self.errors.append(Error(f"Error: invalid move {move}."))

@@ -25,7 +25,7 @@ from game.baseclasses import GameResult as RootGameResult
 from game.baseclasses_2Dboardint import PlayerDescriptionIntValue
 from game.baseclasses import PlayersDescription as RootPlayersDescription
 from game.baseclasses_2Dboardint import Game2DCellsRectangleIntValue, Move2DCellsRectangleIntValue
-from game.baseclasses import Moves, GameState
+from game.baseclasses import Moves, GameStatePlayersInSetOrder
 
 
 class PlayersDescription(RootPlayersDescription):
@@ -53,5 +53,5 @@ class Game(Game2DCellsRectangleIntValue):
             players_description=players_description,
             move_type=Move2DCellsRectangleIntValue,
             moves_type=Moves,
-            gamestate_type=GameState,
+            gamestate_type=GameStatePlayersInSetOrder,
             gameresult_type=GameResult)
