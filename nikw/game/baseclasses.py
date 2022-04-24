@@ -33,7 +33,7 @@ from game.constants import GAMERESULT_UNDEFINED, PLAYERRESULT_UNDEFINED
 from game.utils import explicit_playertype_constant
 
 
-class RootClass(MotherClassSerErr):
+class GameRootClass(MotherClassSerErr):
     """
     Root class of all classes in this file.
     """
@@ -46,7 +46,7 @@ class RootClass(MotherClassSerErr):
 
     def get_hashvalue(self):
         """
-            RootClass.get_hashvalue()
+            GameRootClass.get_hashvalue()
 
             Return a hash value of <self>.
             ___________________________________________________________________
@@ -63,7 +63,7 @@ class RootClass(MotherClassSerErr):
         raise NotImplementedError
 
 
-class Game(RootClass):
+class Game(GameRootClass):
     """
     Game as "chess" or "tic-tac-toe", not as "party" or "match".
     """
@@ -76,7 +76,7 @@ class Game(RootClass):
                  gamestate_type,
                  gameresult_type,
                  configuration=DEFAULT_GAME_CONFIGURATION):
-        RootClass.__init__(self)
+        GameRootClass.__init__(self)
 
         self.configuration = configuration
 
@@ -130,7 +130,7 @@ class Game(RootClass):
         raise NotImplementedError
 
 
-class GameState(RootClass):
+class GameState(GameRootClass):
     def __init__(self,
                  board,
                  gameresult):
@@ -175,7 +175,7 @@ class GameStatePlayersInSetOrder(GameState):
         return "\n".join(res)
 
 
-class GameResult(RootClass):
+class GameResult(GameRootClass):
     def __init__(self,
                  nbr_players):
         self.result = GAMERESULT_UNDEFINED
@@ -188,7 +188,7 @@ class GameResult(RootClass):
         return f"{self.result=}; {self.players_results=}"
 
 
-class Moves(RootClass, dict):
+class Moves(GameRootClass, dict):
     """
     [move index]: (Move,
                    GameState if config["keep intermediate gamestates"] is True)
@@ -207,7 +207,7 @@ class Moves(RootClass, dict):
         return "\n".join(res)
 
 
-class Move(RootClass):
+class Move(GameRootClass):
     def __init__(self,
                  player_turn_index):
         self.player_turn_index = player_turn_index
@@ -216,7 +216,7 @@ class Move(RootClass):
         raise NotImplementedError
 
 
-class PlayersDescription(RootClass, list):
+class PlayersDescription(GameRootClass, list):
     """
     [player_turn_index] = Player
     """
@@ -234,7 +234,7 @@ class PlayersDescription(RootClass, list):
         return "\n".join(res)
 
 
-class PlayerDescription(RootClass):
+class PlayerDescription(GameRootClass):
     def __init__(self,
                  player_turn_index=None,
                  player_name=None,
@@ -248,15 +248,15 @@ class PlayerDescription(RootClass):
             f"(id #{self.player_turn_index}/{explicit_playertype_constant(self.player_type)})"
 
 
-class Board(RootClass):
+class Board(GameRootClass):
     pass
 
 
-class BoardCellIntegerValue(RootClass):
+class BoardCellIntegerValue(GameRootClass):
 
     def __init__(self,
                  int_value=None):
-        RootClass.__init__(self)
+        GameRootClass.__init__(self)
         self.int_value = int_value
 
     def get_hashvalue(self):
