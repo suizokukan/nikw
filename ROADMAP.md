@@ -11,6 +11,10 @@
 * nondefaultvalues > playervalues (à cause de valeurs comme IMPOSSIBLE)
 * ne pas oublier de finir le développement de imp2 pour le Board
 
+[DONE] task-16
+
+    * Updated project's dependencies
+
 [DONE] task-15
 
     * gameresult > gameresults, GameResult > GameResults
