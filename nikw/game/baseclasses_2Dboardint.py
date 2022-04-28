@@ -37,9 +37,34 @@ Board2DCellsIntValueIMP1             Board2DCellsIntValueIMP2
 from hashfuncs import hashfunction
 from exc_errors.errors import ErrorSer as Error
 
+from utils import inverse_dict
 from game.constants import PLAYERTYPE__NOPLAYER, CELL_INTVALUE_PLAYERS
 from game.utils import explicit_playertype_constant
-from game.baseclasses import Board, Move, Game, PlayerDescription
+from game.baseclasses import Board, Move, Game, PlayerDescription, GameStatePlayersInSetOrder
+
+
+class GameStatePlayersInSetOrderIntValue(GameStatePlayersInSetOrder):
+    def __init__(self,
+                 next_player_turn_index,
+                 next_moveid,
+                 players_description,
+                 first_player_turn_index,
+                 board,
+                 gameresults):
+        GameStatePlayersInSetOrder.__init__(
+            self,
+            players_description=players_description,
+            next_player_turn_index=next_player_turn_index,
+            next_moveid=next_moveid,
+            first_player_turn_index=first_player_turn_index,
+            board=board,
+            gameresults=gameresults)
+
+        self.nbr_players = len(self.players_description)
+        self.player2cellintvalue = {}
+        for player_description in self.players_description:
+            self.player2cellintvalue[player_description.player_turn_index] = player_description.cell_intvalue
+        self.cellintvalue2player = inverse_dict(self.player2cellintvalue)
 
 
 class PlayerDescriptionIntValue(PlayerDescription):
@@ -105,6 +130,10 @@ class Board2DCellsIntValue(Board):
     def improved_str(self):
         raise NotImplementedError
 
+    def is_xy_outside_limits(self,
+                             xy):
+        raise NotImplementedError
+
     def set_cell(self,
                  xy,
                  int_value):
@@ -163,7 +192,8 @@ class Board2DCellsIntValueIMP1(Board2DCellsIntValue):
                 yield (x, y)
 
     def get_cell(self,
-                 xy):
+                 xy,
+                 delta_xy=(0, 0)):
         return self.cells[xy]
 
     def get_hashvalue(self):
@@ -277,6 +307,11 @@ class Board2DCellsIntValueIMP1(Board2DCellsIntValue):
                                        xy):
         return self.cells[xy].int_value == self.cell_default_value
 
+    def is_xy_outside_limits(self,
+                             xy):
+        return not self.xymin[0] <= xy[0] <= self.xymax[0] or \
+            not self.xymin[1] <= xy[1] <= self.xymax[1]
+
     def set_cells_to_default_value(self):
         for xy in self.get_all_xy():
             self.set_cell(xy, int_value=self.cell_default_value)
@@ -293,13 +328,15 @@ class Board2DCellsIntValueIMP2(Board2DCellsIntValue):
         We store in cells only the non default values.
     """
     def get_cell(self,
-                 xy):
+                 xy,
+                 delta_xy=(0, 0)):
         """
             Board2DCellsIntValueIMP2.get_cell()
         """
-        if xy in self.cells:
+        pos = (xy[0]+delta_xy[0], xy[1]+delta_xy[1])
+        if pos in self.cells:
             return self.cell_default_value
-        return self.cells[xy]
+        return self.cells[pos]
 
     def get_hashvalue(self):
         """
@@ -321,6 +358,10 @@ class Board2DCellsIntValueIMP2(Board2DCellsIntValue):
     def is_a_cell_set_to_default_value(self,
                                        xy):
         return xy not in self.cells
+
+    def is_xy_outside_limits(self,
+                             xy):
+        return False
 
     def set_cells_to_default_value(self):
         """
@@ -374,6 +415,8 @@ class Game2DCellsRectangleIntValue(Game):
         Is it possible to apply <move> to the last gameresult ?
         """
         if not move.player_turn_index == self.current_gamestate.next_player_turn_index:
+            return False
+        if self.current_gamestate.board.is_xy_outside_limits(move.xy):
             return False
         if not self.current_gamestate.board.is_a_cell_set_to_default_value(move.xy):
             return False

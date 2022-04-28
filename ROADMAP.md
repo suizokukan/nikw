@@ -1,15 +1,26 @@
+...https://www.ijtsrd.com/papers/ijtsrd49465.pdf
+
 [CURRENT] v. 0.0.1
 
-* il faut réussir à sauvegarder/charger une partie pour ...
-  * tester pour ...
-    * tester la fonction is_a_winning_pos()
-    
+- il faut réussir à sauvegarder/charger une partie pour ...
+  - tester pour ...
+    - tester la fonction is_a_winning_pos()
+      + tester delta_xy   == ( 1, 0)
+      + puis   delta_xy   == ( 1, 1): quels points de départ ?
+      + puis   delta_xy   == (-1, 1): quels points de départ ?
+      - test général
+      - last_move=...
+      - test général
+
 * cartographier les classes, ça devient compliqué
-* evaluate_position(last_move=None) > pour accélérer, évaluer si possible depuis le dernier coup
 * je n'aime pas le fait que improved_str() renvoie tantôt une string tantônt olusieurs lignes. > ça marche pourtant avec un simple .append() (pas besoin d'extend()). A documenter dans exc_***.
 * "keep intermediate xxx" n'est pas implémenté
 * nondefaultvalues > playervalues (à cause de valeurs comme IMPOSSIBLE)
 * ne pas oublier de finir le développement de imp2 pour le Board
+
+[DONE] task-17
+
+    * everything's ready for the first tests
 
 [DONE] task-16
 

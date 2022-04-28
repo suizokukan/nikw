@@ -26,9 +26,12 @@ from datetime import datetime
 from exc_motherclass.motherclass import MotherClassSerErr
 from hashfuncs import hashfunction, binhash_to_strb85
 
+from iaswn.iaswn import to_jsonstr
+
 from game.constants import DEFAULT_GAME_CONFIGURATION
 from game.constants import DEFAULT_FIRSTPLAYER_TURN_INDEX, DEFAULT_FIRSTMOVEID
-from game.constants import DATANATURE_INMEMORY, PLAYERTYPE__NOPLAYER
+from game.constants import PLAYERTYPE__NOPLAYER
+from game.constants import DATANATURE_INMEMORY, DATANATURE_SERIALIZED
 from game.constants import GAMEMAINRESULT_UNDEFINED, PLAYERRESULT_UNDEFINED
 from game.utils import explicit_playertype_constant
 
@@ -42,6 +45,9 @@ class GameRootClass(MotherClassSerErr):
 
     def export_as(self,
                   expected_data_type=DATANATURE_INMEMORY):
+        if expected_data_type==DATANATURE_SERIALIZED:
+            return to_jsonstr(self)
+
         raise NotImplementedError
 
     def get_hashvalue(self):
@@ -67,6 +73,25 @@ class Game(GameRootClass):
     """
     Game as "chess" or "tic-tac-toe", not as "party" or "match".
     """
+    # TODO
+    # à  supprimer
+    # def __eq__(self,
+    #            other):
+    #     if type(other) is not type(self):
+    #         return False
+    #     return self.configuration == other.configuration and \
+    #         self.rules_name == other.rules_name and \
+    #         self.timestamp_start == other.timestamp_start and \
+    #         self.gameid == other.gameid and \
+    #         self.player_description == other.players_description and \
+    #         self.board_type == other.board_type and \
+    #         self.move_type == other.move_type and \
+    #         self.moves_type == other.moves_type and \
+    #         self.moves == other.moves and \
+    #         self.gameresults_type == other.gameresults_type and \
+    #         self.gamestate_type == other.gamestate_type and \
+    #         self.current_gamestate == other.current_gamestate
+
     def __init__(self,
                  rules_name,
                  players_description,
@@ -96,13 +121,14 @@ class Game(GameRootClass):
         self.gameresults_type = gameresults_type
 
         self.gamestate_type = gamestate_type
-        self.current_gamestate = gamestate_type(
-            next_player_turn_index=self.players_description.first_player_turn_index,
-            next_moveid=self.moves.first_moveid,
-            nbr_players=len(self.players_description),
-            first_player_turn_index=DEFAULT_FIRSTPLAYER_TURN_INDEX,
-            board=self.board_type(),
-            gameresults=self.gameresults_type(nbr_players=len(self.players_description)))
+        self.current_gamestate = \
+            gamestate_type(
+                players_description=players_description,
+                next_player_turn_index=self.players_description.first_player_turn_index,
+                next_moveid=self.moves.first_moveid,
+                first_player_turn_index=DEFAULT_FIRSTPLAYER_TURN_INDEX,
+                board=self.board_type(),
+                gameresults=self.gameresults_type(nbr_players=len(self.players_description)))
 
     def get_gameid(self):
         res = hashfunction()
@@ -131,9 +157,20 @@ class Game(GameRootClass):
 
 
 class GameState(GameRootClass):
+    # TODO
+    #  à supprimer
+    # def __eq__(self,
+    #            other):
+    #     if type(other) is not type(self):
+    #         return False
+    #     return self.board == other.board and \
+    #         self.gameresults == other.gameresults
+
     def __init__(self,
+                 players_description,
                  board,
                  gameresults):
+        self.players_description=players_description
         self.board = board
         self.gameresults = gameresults
 
@@ -145,15 +182,15 @@ class GameStatePlayersInSetOrder(GameState):
     def __init__(self,
                  next_player_turn_index,
                  next_moveid,
-                 nbr_players,
                  first_player_turn_index,
+                 players_description,
                  board,
                  gameresults):
-        self.nbr_players = nbr_players
         self.first_player_turn_index = first_player_turn_index
         self.next_player_turn_index = next_player_turn_index
         self.next_moveid = next_moveid
         GameState.__init__(self,
+                           players_description=players_description,
                            board=board,
                            gameresults=gameresults)
 

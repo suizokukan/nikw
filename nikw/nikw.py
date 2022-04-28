@@ -23,54 +23,56 @@
 """
 import sys
 
-import game.gamerules.gamerules
+from game.gamerules.gamerules import import_gamerules
 
 
 def main():
-    import importlib
-    try:
-        for gamerule, gamerule_data in game.gamerules.gamerules.KNOWN_GAMESRULES.items():
-            new_module = importlib.import_module(gamerule_data[0])
-            gamerule_data[1] = new_module
-            print("... imported a new rule:", gamerule)
-    except ModuleNotFoundError as err:
-        print("TODO/Boom !", err, gamerule)
+    if not import_gamerules():
+        sys.exit(1)
 
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # !!! tous les types sont empruntés au module via getattr: !!!
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    GAME_TYPE = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;5;2p;boardimp1"][1],
-                        "Game")
-    PLAYERDESCRIPTION_TYPE = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;5;2p;boardimp1"][1],
-                                     "PlayerDescription")
-    PLAYERSDESCRIPTION_TYPE = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;5;2p;boardimp1"][1],
-                                      "PlayersDescription")
+    # from game.constants import PLAYERTYPE__RANDOM, DATANATURE_SERIALIZED
+    # create_game = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;5;2p;boardimp1"][1],
+    #                       "create_game")
+    # GAME = create_game(players_data=(("Xavier", PLAYERTYPE__RANDOM),
+    #                                  ("Lionel", PLAYERTYPE__RANDOM)))
 
-    from game.constants import PLAYERTYPE__RANDOM
-    P1 = PLAYERDESCRIPTION_TYPE(player_turn_index=0,
-                                player_name="Xavier",
-                                player_type=PLAYERTYPE__RANDOM)
-    P2 = PLAYERDESCRIPTION_TYPE(player_turn_index=1,
-                                player_name="Lionel",
-                                player_type=PLAYERTYPE__RANDOM)
-    PLAYERS = PLAYERSDESCRIPTION_TYPE()
-    PLAYERS.append(P1)
-    PLAYERS.append(P2)
+    # GAME.play_a_move((1, 1))
+    # GAME.play_a_move((0, 0))
+    # GAME.play_a_move((1, 0))
+    # GAME.play_a_move((0, 1))
+    # GAME.play_a_move((1, 2))
+    # GAME.play_a_move((0, 2))
+    # GAME.play_a_move((1, 3))
+    # GAME.play_a_move((0, 3))
+    # GAME.play_a_move((1, 4))
+    # GAME.play_a_move((-2, -2))
+    # GAME.play_a_move((1, -7))
+    # GAME.play_a_move((-3, -3))
+    # GAME.play_a_move((1, -6))
+    # GAME.play_a_move((-4, -4))
+    # GAME.play_a_move((1, -5))
+    # GAME.play_a_move((-5, -5))
+    # GAME.play_a_move((1, -4))
+    # GAME.play_a_move((-6, 6))
+    # GAME.play_a_move((1, -3))
 
-    GAME = GAME_TYPE(players_description=PLAYERS)
-    GAME.play_a_move((1, 1))
-    GAME.play_a_move((0, 0))
-    GAME.play_a_move((1, 0))
-    GAME.play_a_move((0, 1))
-    GAME.play_a_move((1, 2))
-    GAME.play_a_move((0, 2))
-    GAME.play_a_move((1, 3))
-    GAME.play_a_move((0, 3))
-    GAME.play_a_move((1, 4))
-    print(GAME)
-    from iaswn import Iaswn, encode, decode, IaswnEncoder, IaswnError, to_jsonstr
-    print(GAME.to_jsonstr())
+    # serialized_game = GAME.export_as(DATANATURE_SERIALIZED)
+    # with open("z.dump", "w") as exportfile:
+    #     exportfile.write(serialized_game)
+    # from iaswn.iaswn import from_jsonstr, diagnostic
+    # GAME = from_jsonstr(serialized_game)
+    # print(GAME)
 
+    # print(diagnostic(GAME))
+
+    from iaswn.iaswn import from_jsonstr
+    with open("tests/gomokunarabe19x19_5_2players.6.iaswn", "r") as inputfile:
+        jsonstr = inputfile.read()
+        GAME = from_jsonstr(jsonstr)
+        print(GAME)
 
 if __name__ == '__main__':
     sys.exit(main())

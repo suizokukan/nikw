@@ -21,6 +21,8 @@
 """
     nikw project : nikw/game/gamerules/gamerules.py
 """
+import importlib
+
 # KNOWN_GAMESRULES[(str) game rule name] = ("game rule module",
 #                                           None < will be the imported module
 #                                          )
@@ -31,3 +33,24 @@ KNOWN_GAMESRULES = \
     {"gomokunarabe/19x19;5;2p;boardimp1":
      ["game.gamerules.gomokunarabe_19x19_5_2p_boardimp1.game", None,],
      }
+
+
+def import_gamerules(gamerules_to_be_imported=None):
+    """
+        gamerules_to_be_imported: iterable of strings, e.g. ('gomokunarabe_19x19_5_2players',)
+    """
+    success = True
+
+    try:
+        for gamerule, gamerule_data in KNOWN_GAMESRULES.items():
+            if gamerules_to_be_imported is None or \
+               gamerule in gamerules_to_be_imported:
+                print("...", gamerule_data[0])
+                new_module = importlib.import_module(gamerule_data[0])
+                gamerule_data[1] = new_module
+                print("... imported a new rule:", gamerule)
+    except ModuleNotFoundError as err:
+        print("TODO/Boom !", err, gamerule, ">", gamerule_data)
+        success = False
+
+    return success

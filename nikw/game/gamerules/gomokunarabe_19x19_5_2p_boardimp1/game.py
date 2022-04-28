@@ -27,7 +27,6 @@ from game.baseclasses_2Dboardint import Board2DCellsIntValueIMP1, PlayerDescript
 from game.constants import CELL_INTVALUE_PLAYERS, CELL_INTVALUE_NOPLAYER, IMPROVEDSTR_SYMBOLS_FOR_INTVALUES
 from game.baseclasses_gomokunarabeNxN_S_Pplayers import Game as RootGame
 from game.baseclasses_gomokunarabeNxN_S_Pplayers import GameState as RootGameState
-from game.baseclasses import GameStatePlayersInSetOrder
 
 
 # ! game rule name MUST BE EXACTLY THE ONE DEFINED AS game.py::RULESNAME
@@ -70,7 +69,7 @@ class GameState(RootGameState):
     def __init__(self,
                  next_player_turn_index,
                  next_moveid,
-                 nbr_players,
+                 players_description,
                  first_player_turn_index,
                  board,
                  gameresults):
@@ -78,7 +77,7 @@ class GameState(RootGameState):
             self,
             next_player_turn_index=next_player_turn_index,
             next_moveid=next_moveid,
-            nbr_players=nbr_players,
+            players_description=players_description,
             first_player_turn_index=first_player_turn_index,
             board=board,
             gameresults=gameresults,
@@ -94,3 +93,19 @@ class Game(RootGame):
                           gamestate_type=GameState,
                           players_description=players_description,
                           alignement_length=ALIGNEMENT_LENGTH)
+
+
+def create_game(players_data):
+    player1_data, player2_data = players_data
+
+    p1 = PlayerDescription(player_turn_index=0,
+                           player_name=player1_data[0],
+                           player_type=player1_data[1])
+    p2 = PlayerDescription(player_turn_index=1,
+                           player_name=player2_data[0],
+                           player_type=player2_data[1])
+    players = PlayersDescription()
+    players.append(p1)
+    players.append(p2)
+
+    return Game(players_description=players)
