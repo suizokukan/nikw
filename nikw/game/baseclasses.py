@@ -33,10 +33,12 @@ from game.constants import DEFAULT_FIRSTPLAYER_TURN_INDEX, DEFAULT_FIRSTMOVEID
 from game.constants import PLAYERTYPE__NOPLAYER
 from game.constants import DATANATURE_INMEMORY, DATANATURE_SERIALIZED
 from game.constants import GAMEMAINRESULT_UNDEFINED, PLAYERRESULT_UNDEFINED
+from game.constants import GAMEMAINRESULT_GAMEISOVER, GAMEMAINRESULT_GAMEISNOTOVER
+from game.constants import PLAYERRESULT_VICTORIOUS
 from game.utils import explicit_playertype_constant
 
 
-class GameRootClass(MotherClassSerErr):
+class RootClass(MotherClassSerErr):
     """
     Root class of all classes in this file.
     """
@@ -52,7 +54,7 @@ class GameRootClass(MotherClassSerErr):
 
     def get_hashvalue(self):
         """
-            GameRootClass.get_hashvalue()
+            RootClass.get_hashvalue()
 
             Return a hash value of <self>.
             ___________________________________________________________________
@@ -69,29 +71,10 @@ class GameRootClass(MotherClassSerErr):
         raise NotImplementedError
 
 
-class Game(GameRootClass):
+class Game(RootClass):
     """
     Game as "chess" or "tic-tac-toe", not as "party" or "match".
     """
-    # TODO
-    # à  supprimer
-    # def __eq__(self,
-    #            other):
-    #     if type(other) is not type(self):
-    #         return False
-    #     return self.configuration == other.configuration and \
-    #         self.rules_name == other.rules_name and \
-    #         self.timestamp_start == other.timestamp_start and \
-    #         self.gameid == other.gameid and \
-    #         self.player_description == other.players_description and \
-    #         self.board_type == other.board_type and \
-    #         self.move_type == other.move_type and \
-    #         self.moves_type == other.moves_type and \
-    #         self.moves == other.moves and \
-    #         self.gameresults_type == other.gameresults_type and \
-    #         self.gamestate_type == other.gamestate_type and \
-    #         self.current_gamestate == other.current_gamestate
-
     def __init__(self,
                  rules_name,
                  players_description,
@@ -101,7 +84,7 @@ class Game(GameRootClass):
                  gamestate_type,
                  gameresults_type,
                  configuration=DEFAULT_GAME_CONFIGURATION):
-        GameRootClass.__init__(self)
+        RootClass.__init__(self)
 
         self.configuration = configuration
 
@@ -130,6 +113,9 @@ class Game(GameRootClass):
                 board=self.board_type(),
                 gameresults=self.gameresults_type(nbr_players=len(self.players_description)))
 
+    def end_game(self):
+        self.gameresults.end_game()
+
     def get_gameid(self):
         res = hashfunction()
         res.update(str(self.rules_name).encode())
@@ -155,17 +141,11 @@ class Game(GameRootClass):
     def play_a_move(self):
         raise NotImplementedError
 
+    def start_game(self):
+        self.gameresults.start_game()
 
-class GameState(GameRootClass):
-    # TODO
-    #  à supprimer
-    # def __eq__(self,
-    #            other):
-    #     if type(other) is not type(self):
-    #         return False
-    #     return self.board == other.board and \
-    #         self.gameresults == other.gameresults
 
+class GameState(RootClass):
     def __init__(self,
                  players_description,
                  board,
@@ -173,6 +153,12 @@ class GameState(GameRootClass):
         self.players_description=players_description
         self.board = board
         self.gameresults = gameresults
+
+    def end_game(self):
+        self.gameresults.end_game()
+
+    def start_game(self):
+        self.gameresults.start_game()
 
     def update_results_from_current_board(self):
         raise NotImplementedError
@@ -199,7 +185,7 @@ class GameStatePlayersInSetOrder(GameState):
         res.append("Game state:")
         res.append(f"o  next player turn index: {self.next_player_turn_index}")
         res.append(f"o  next move id: {self.next_moveid}")
-        if self.next_player_turn_index == 0:
+        if self.next_moveid == 0:
             res.append(f"o  game result: the game has not begun.")
         else:
             res.append(f"o  game result: {self.gameresults.improved_str()}")
@@ -215,20 +201,54 @@ class GameStatePlayersInSetOrder(GameState):
             self.next_player_turn_index = self.first_player_turn_index
 
 
-class GameResults(GameRootClass):
+class GameResults(RootClass):
     def __init__(self,
                  nbr_players):
+        self.nbr_players = nbr_players
         self.mainresult = GAMEMAINRESULT_UNDEFINED
         self.players_results = {}
-        for player_turn_index in range(nbr_players):
-            self.players_results[player_turn_index] = PLAYERRESULT_UNDEFINED
+        self.set_all_players_result()
+
+    def end_game(self):
+        self.mainresult = GAMEMAINRESULT_GAMEISOVER
+
+    def is_there_only_one_winner(self,
+                                 player_id):
+        """
+            GameResults.is_there_only_one_winner()
+
+            Return True (False otherwise) if <player_id> is the only winner.
+            ___________________________________________________________________
+
+            ARGUMENT: (int)player_id
+
+            RETURNED VALUE: (bool)True if <player_id> is the only winner.
+        """
+        print("@@", self.players_results, PLAYERRESULT_VICTORIOUS)
+        for _player_id, player_result in self.players_results.items():
+            if _player_id == player_id and \
+               player_result != PLAYERRESULT_VICTORIOUS:
+                return False
+            if _player_id != player_id and \
+               player_result == PLAYERRESULT_VICTORIOUS:
+                return False
+        return True
 
     def improved_str(self):
         # TODO: explicit self.mainresult + self.players_results
         return f"{self.mainresult=}; {self.players_results=}"
 
+    def set_all_players_result(self,
+                               value=PLAYERRESULT_UNDEFINED):
+        self.players_results.clear()
+        for player_turn_index in range(self.nbr_players):
+            self.players_results[player_turn_index] = PLAYERRESULT_UNDEFINED
 
-class Moves(GameRootClass, dict):
+    def start_game(self):
+        self.mainresult = GAMEMAINRESULT_GAMEISNOTOVER
+
+
+class Moves(RootClass, dict):
     """
     [move index]: (Move,
                    GameState if config["keep intermediate gamestates"] is True)
@@ -247,7 +267,7 @@ class Moves(GameRootClass, dict):
         return "\n".join(res)
 
 
-class Move(GameRootClass):
+class Move(RootClass):
     def __init__(self,
                  player_turn_index):
         self.player_turn_index = player_turn_index
@@ -256,7 +276,7 @@ class Move(GameRootClass):
         raise NotImplementedError
 
 
-class PlayersDescription(GameRootClass, list):
+class PlayersDescription(RootClass, list):
     """
     [player_turn_index] = Player
     """
@@ -274,7 +294,7 @@ class PlayersDescription(GameRootClass, list):
         return "\n".join(res)
 
 
-class PlayerDescription(GameRootClass):
+class PlayerDescription(RootClass):
     def __init__(self,
                  player_turn_index=None,
                  player_name=None,
@@ -288,15 +308,15 @@ class PlayerDescription(GameRootClass):
             f"(id #{self.player_turn_index}/{explicit_playertype_constant(self.player_type)})"
 
 
-class Board(GameRootClass):
+class Board(RootClass):
     pass
 
 
-class BoardCellIntegerValue(GameRootClass):
+class BoardCellIntegerValue(RootClass):
 
     def __init__(self,
                  int_value=None):
-        GameRootClass.__init__(self)
+        RootClass.__init__(self)
         self.int_value = int_value
 
     def get_hashvalue(self):

@@ -33,20 +33,21 @@ def main():
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     # !!! tous les types sont empruntés au module via getattr: !!!
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    # from game.constants import PLAYERTYPE__RANDOM, DATANATURE_SERIALIZED
-    # create_game = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;5;2p;boardimp1"][1],
-    #                       "create_game")
-    # GAME = create_game(players_data=(("Xavier", PLAYERTYPE__RANDOM),
-    #                                  ("Lionel", PLAYERTYPE__RANDOM)))
+    from game.constants import PLAYERTYPE__RANDOM, DATANATURE_SERIALIZED
+    import game.gamerules.gamerules
+    create_game = getattr(game.gamerules.gamerules.KNOWN_GAMESRULES["gomokunarabe/19x19;5;2p;boardimp1"][1],
+                          "create_game")
+    GAME = create_game(players_data=(("Xavier", PLAYERTYPE__RANDOM),
+                                     ("Lionel", PLAYERTYPE__RANDOM)))
 
-    # GAME.play_a_move((1, 1))
-    # GAME.play_a_move((0, 0))
-    # GAME.play_a_move((1, 0))
-    # GAME.play_a_move((0, 1))
-    # GAME.play_a_move((1, 2))
-    # GAME.play_a_move((0, 2))
-    # GAME.play_a_move((1, 3))
-    # GAME.play_a_move((0, 3))
+    GAME.play_a_move((1, 1))
+    GAME.play_a_move((0, 0))
+    GAME.play_a_move((1, 0))
+    GAME.play_a_move((0, 1))
+    GAME.play_a_move((1, 2))
+    GAME.play_a_move((0, 2))
+    GAME.play_a_move((1, 3))
+    GAME.play_a_move((0, 3))
     # GAME.play_a_move((1, 4))
     # GAME.play_a_move((-2, -2))
     # GAME.play_a_move((1, -7))
@@ -64,15 +65,15 @@ def main():
     #     exportfile.write(serialized_game)
     # from iaswn.iaswn import from_jsonstr, diagnostic
     # GAME = from_jsonstr(serialized_game)
-    # print(GAME)
+    print(GAME)
 
     # print(diagnostic(GAME))
 
-    from iaswn.iaswn import from_jsonstr
-    with open("tests/gomokunarabe19x19_5_2players.6.iaswn", "r") as inputfile:
-        jsonstr = inputfile.read()
-        GAME = from_jsonstr(jsonstr)
-        print(GAME)
+    # from iaswn.iaswn import from_jsonstr
+    # with open("tests/gomokunarabe19x19_5_2players.6.iaswn", "r") as inputfile:
+    #     jsonstr = inputfile.read()
+    #     GAME = from_jsonstr(jsonstr)
+    #     print(GAME)
 
 if __name__ == '__main__':
     sys.exit(main())

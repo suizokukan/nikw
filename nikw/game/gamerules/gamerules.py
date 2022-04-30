@@ -45,10 +45,8 @@ def import_gamerules(gamerules_to_be_imported=None):
         for gamerule, gamerule_data in KNOWN_GAMESRULES.items():
             if gamerules_to_be_imported is None or \
                gamerule in gamerules_to_be_imported:
-                print("...", gamerule_data[0])
                 new_module = importlib.import_module(gamerule_data[0])
                 gamerule_data[1] = new_module
-                print("... imported a new rule:", gamerule)
     except ModuleNotFoundError as err:
         print("TODO/Boom !", err, gamerule, ">", gamerule_data)
         success = False

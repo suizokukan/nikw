@@ -179,18 +179,51 @@ import sys
 
 from iaswn.iaswn import from_jsonstr
 from nikw.game.gamerules.gamerules import import_gamerules
+from nikw.game.constants import CELL_INTVALUE_PLAYERS
 
 sys.path.append("nikw/")
 
 class Tests__gomokunarabe_19x19_5_2players(unittest.TestCase):
 
     def setUp(self):
+        """
+            Tests__gomokunarabe_19x19_5_2players.setUp()
+        """
         gamerules = ('gomokunarabe/19x19;5;2p;boardimp1',)
         if not import_gamerules(gamerules):
             self.fail(f"Can't setup the test '{self.__class__.__name__}': "
                       f"can't import '{gamerules}'.")
 
     def test_file_1(self):
-        with open("tests/gomokunarabe19x19_5_2players.6.iaswn", "r") as inputfile:
+        """
+            Tests__gomokunarabe_19x19_5_2players.test_file_1()
+
+            Test based upon the following file:
+                tests/gomokunarabe19x19_5_2players.1.iaswn
+
+                (see content of this game at the beginning of the current file)
+        """
+        with open("tests/gomokunarabe19x19_5_2players.1.iaswn", "r") as inputfile:
             jsonstr = inputfile.read()
-            GAME = from_jsonstr(jsonstr)
+            game = from_jsonstr(jsonstr)
+            player_turn_index = 0
+            self.assertFalse(
+                game.current_gamestate.gameresults.is_there_only_one_winner(
+                    CELL_INTVALUE_PLAYERS[player_turn_index]))
+
+    # def test_file_6(self):
+    #     """
+    #         Tests__gomokunarabe_19x19_5_2players.test_file_6()
+
+    #         Test based upon the following file:
+    #             tests/gomokunarabe19x19_5_2players.6.iaswn
+
+    #             (see content of this game at the beginning of the current file)
+    #     """
+    #     with open("tests/gomokunarabe19x19_5_2players.6.iaswn", "r") as inputfile:
+    #         jsonstr = inputfile.read()
+    #         game = from_jsonstr(jsonstr)
+    #         player_turn_index = 0
+    #         self.assertTrue(
+    #             game.current_gamestate.gameresults.is_there_only_one_winner(
+    #                 CELL_INTVALUE_PLAYERS[player_turn_index]))

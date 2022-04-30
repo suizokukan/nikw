@@ -18,6 +18,10 @@
 * nondefaultvalues > playervalues (à cause de valeurs comme IMPOSSIBLE)
 * ne pas oublier de finir le développement de imp2 pour le Board
 
+[DONE] task-18
+
+    * bug: confusion player_turn_index/player_id
+
 [DONE] task-17
 
     * everything's ready for the first tests

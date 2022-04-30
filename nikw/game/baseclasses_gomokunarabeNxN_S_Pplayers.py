@@ -21,6 +21,8 @@
 """
     nikw project : nikw/game/baseclasses_gomokunarabeNxN_S_Pplayers.py
 """
+from game.constants import GAMEMAINRESULT_GAMEISOVER
+from game.constants import PLAYERRESULT_NOTVICTORIOUS, PLAYERRESULT_VICTORIOUS
 from game.baseclasses import GameResults as RootGameResults
 from game.baseclasses_2Dboardint import PlayerDescriptionIntValue
 from game.baseclasses import PlayersDescription as RootPlayersDescription
@@ -28,6 +30,7 @@ from game.baseclasses_2Dboardint import Game2DCellsRectangleIntValue, Move2DCell
 from game.baseclasses import Moves
 
 
+# TODO pas sûr que ces coquilles vides soient vraiment utiles
 class PlayersDescription(RootPlayersDescription):
     pass
 
@@ -191,7 +194,20 @@ class GameState(GameStatePlayersInSetOrderIntValue):
 
     def update_results_from_current_board(self,
                                           last_move=None):
-        print("@@@", self.search_winning_position(last_move))
+        res = self.search_winning_position(last_move)
+
+        if not res:
+            return
+
+        # TODO
+        #   On considère que le premier résultat est le seul à être pris en compte.
+        (xy, delta_xy), (stone_index, stone_value) = tuple(res.items())[0]
+
+        self.end_game()
+
+        winner__player_id = self.cellintvalue2player[stone_value]
+        self.gameresults.set_all_players_result(value=PLAYERRESULT_NOTVICTORIOUS)
+        self.gameresults.players_results[winner__player_id] = PLAYERRESULT_VICTORIOUS
 
 
 class Game(Game2DCellsRectangleIntValue):
